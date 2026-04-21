@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مغامرات الكشافة عبير - تحدي الحروف الكشفية</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --primary-dark: #145a1f;
+      --secondary: #ffca28;
+      --accent: #e65100;
+      --forest: #1b5e20;
+      --white: #ffffff;
+      --bg-light: #f4f8f2;
+      --shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      background: #dcecf3;
+    }
+
+    body {
+      position: relative;
+    }
+
+    button, input {
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* الخلفية العامة */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background: linear-gradient(to bottom, #dcecf3 0%, #dcecf3 56%, #cde8c6 56%, #cde8c6 100%);
+      overflow: hidden;
+    }
+
+    .page-bg::before,
+    .page-bg::after {
+      content: "";
+      position: absolute;
+      bottom: -140px;
+      width: 70vw;
+      height: 38vw;
+      min-width: 500px;
+      min-height: 260px;
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+
+    .page-bg::before {
+      left: -10vw;
+      background: #82c57f;
+    }
+
+    .page-bg::after {
+      right: -10vw;
+      background: #9fd39b;
+    }
+
+    /* الشاشات */
+    .screen {
+      display: none;
+      width: min(1100px, calc(100% - 28px));
+      margin: 20px auto;
+      background: rgba(255,255,255,0.96);
+      border: 7px solid #2f7d32;
+      border-radius: 38px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      padding: 28px;
+      position: relative;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeUp 0.45s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* شاشة البداية - بدون سكرول */
+    #screen-start {
+      display: flex;
+      width: min(1240px, calc(100% - 40px));
+      min-height: calc(100vh - 40px);
+      margin: 20px auto;
+      border-radius: 46px;
+      overflow: hidden;
+      padding: 0;
+      background:
+        linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.15)),
+        url("./assets/bg.jpg") center center / cover no-repeat;
+      border: 9px solid #2f7d32;
+      box-shadow: 0 28px 65px rgba(0,0,0,0.22);
+      position: relative;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    #screen-start::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,220,120,0.15), transparent 18%),
+        radial-gradient(circle at 85% 18%, rgba(255,220,120,0.13), transparent 16%);
+      pointer-events: none;
+    }
+
+    .start-overlay {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      align-items: center;
+      gap: 24px;
+      padding: 34px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .start-card {
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 34px;
+      padding: 30px;
+      color: white;
+      text-align: right;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.16);
+    }
+
+    .start-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .start-title {
+      font-size: clamp(2.4rem, 4vw, 4.6rem);
+      line-height: 1.05;
+      font-weight: 900;
+      margin-bottom: 12px;
+      text-shadow: 0 10px 26px rgba(0,0,0,0.26);
+    }
+
+    .start-title span {
+      color: var(--secondary);
+    }
+
+    .start-subtitle {
+      font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+      line-height: 1.9;
+      margin-bottom: 18px;
+      color: rgba(255,255,255,0.96);
+    }
+
+    .start-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+      justify-content: flex-start;
+    }
+
+    .feature-chip {
+      padding: 10px 15px;
+      border-radius: 15px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .start-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, var(--secondary), #ffd95c);
+      color: #5f4300;
+      border: none;
+      padding: 16px 28px;
+      font-size: 1.2rem;
+      font-weight: 900;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      box-shadow: 0 14px 26px rgba(255,202,40,0.24);
+    }
+
+    .btn-main:hover {
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .btn-soft {
+      background: rgba(255,255,255,0.14);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 15px 22px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .btn-soft:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .hero-side {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: min(32vw, 430px);
+      height: min(32vw, 430px);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,223,150,0.34), rgba(255,223,150,0.12), transparent 70%);
+      filter: blur(6px);
+      animation: glowFloat 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowFloat {
+      from { transform: translateY(0) scale(1); }
+      to { transform: translateY(-14px) scale(1.05); }
+    }
+
+    .hero-character {
+      position: relative;
+      z-index: 2;
+      width: min(28vw, 360px);
+      max-width: 100%;
+      max-height: 68vh;
+      object-fit: contain;
+      filter: drop-shadow(0 22px 35px rgba(0,0,0,0.32));
+      animation: floatAbeer 3.2s ease-in-out infinite;
+    }
+
+    @keyframes floatAbeer {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+
+    .spark {
+      position: absolute;
+      color: #fff5b0;
+      font-size: 1.8rem;
+      text-shadow: 0 0 14px rgba(255,226,120,0.5);
+      animation: sparkle 3s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    .spark.s1 { top: 16%; left: 12%; }
+    .spark.s2 { bottom: 18%; left: 18%; animation-delay: 0.8s; }
+    .spark.s3 { top: 20%; right: 12%; animation-delay: 1.4s; }
+    .spark.s4 { bottom: 14%; right: 18%; animation-delay: 2s; }
+
+    @keyframes sparkle {
+      from { transform: translateY(0) scale(1); opacity: 0.7; }
+      to { transform: translateY(-10px) scale(1.12); opacity: 1; }
+    }
+
+    /* محتوى اللعبة */
+    h1 {
+      color: var(--forest);
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+
+    p {
+      line-height: 1.8;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, #ffffff, #f8fcf7);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+    }
+
+    input {
+      padding: 14px 16px;
+      font-size: 1.1rem;
+      border: 2px solid rgba(46,125,50,0.18);
+      border-radius: 16px;
+      text-align: center;
+      margin: 8px;
+      width: 220px;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(46,125,50,0.10);
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 15px 26px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 12px 24px rgba(46,125,50,0.18);
+    }
+
+    .btn-green:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-orange {
+      background: linear-gradient(135deg, #ef6c00, #d84315);
+      color: white;
+      border: none;
+      padding: 15px 26px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 18px;
+      cursor: pointer;
+    }
+
+    .btn-yellow {
+      background: linear-gradient(135deg, #ffe082, #ffd54f);
+      color: #664600;
+      border: none;
+      padding: 15px 26px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 18px;
+      cursor: pointer;
+    }
+
+    .row-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    #status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .team-box {
+      background: linear-gradient(180deg, #ffffff, #f8fff7);
+      padding: 15px 22px;
+      border-radius: 22px;
+      min-width: 170px;
+      border: 2px solid rgba(0,0,0,0.08);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+      transition: 0.25s ease;
+    }
+
+    .team-box.active {
+      border-color: rgba(255,202,40,0.9);
+      background: linear-gradient(180deg, #fff8da, #fffef2);
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .team-name {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--forest);
+      margin-bottom: 4px;
+    }
+
+    .team-score {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #7e5a00;
+    }
+
+    #turn-text {
+      color: var(--forest);
+      font-size: 1.6rem;
+      font-weight: 900;
+      margin: 18px 0 22px;
+    }
+
+    .letters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .letter-btn {
+      background: linear-gradient(180deg, #ffffff, #f3fbf4);
+      border: 2px solid rgba(46,125,50,0.14);
+      border-radius: 22px;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--primary);
+      padding: 16px 10px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+      transition: 0.22s ease;
+    }
+
+    .letter-btn:hover:not(.disabled) {
+      transform: translateY(-4px) scale(1.04);
+      border-color: rgba(255,202,40,0.9);
+      box-shadow: 0 14px 28px rgba(255,202,40,0.18);
+      color: #8b5f00;
+    }
+
+    .letter-btn.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .timer-track {
+      width: 100%;
+      height: 18px;
+      background: #edf1ed;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 22px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    #timer-progress {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #4caf50, #ffeb3b, #f44336);
+      transition: width 1s linear;
+      border-radius: 999px;
+    }
+
+    #current-letter {
+      font-size: 5.8rem;
+      color: #d28b00;
+      margin-bottom: 10px;
+      text-shadow: 0 10px 24px rgba(255,202,40,0.18);
+    }
+
+    .question-panel {
+      font-size: 1.9rem;
+      font-weight: 900;
+      line-height: 1.8;
+      padding: 28px;
+      border: 3px dashed rgba(46,125,50,0.25);
+      border-radius: 28px;
+      margin: 20px 0;
+      background: linear-gradient(180deg, #ffffff, #fffdf6);
+      color: var(--forest);
+    }
+
+    #ans-box {
+      font-size: 1.45rem;
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-weight: 900;
+      background: #fbfff0;
+      padding: 22px;
+      border-radius: 22px;
+      border: 2px solid rgba(255,202,40,0.6);
+    }
+
+    #final-results {
+      display: grid;
+      gap: 12px;
+      margin: 26px 0;
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, #ffffff, #f8fff8);
+      border: 2px solid rgba(46,125,50,0.12);
+      border-radius: 22px;
+      padding: 18px;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--forest);
+    }
+
+    .result-card.winner {
+      background: linear-gradient(180deg, #fff9de, #fffef4);
+      border-color: rgba(255,202,40,0.7);
+      color: #8a5a00;
+      transform: scale(1.02);
+    }
+
+    /* موبايل وتوافق */
+    @media (max-width: 980px) {
+      #screen-start {
+        min-height: calc(100vh - 24px);
+        width: calc(100% - 24px);
+        margin: 12px auto;
+      }
+
+      .start-overlay {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px;
+        align-items: center;
+      }
+
+      .hero-side {
+        order: -1;
+        min-height: 220px;
+      }
+
+      .hero-character {
+        width: min(52vw, 260px);
+        max-height: 32vh;
+      }
+
+      .start-card {
+        text-align: center;
+        padding: 24px 18px;
+      }
+
+      .start-features,
+      .start-actions {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #screen-start {
+        min-height: calc(100vh - 18px);
+        width: calc(100% - 18px);
+        border-radius: 28px;
+        border-width: 6px;
+      }
+
+      .start-overlay {
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .start-card {
+        padding: 18px 14px;
+        border-radius: 22px;
+      }
+
+      .start-title {
+        font-size: 2rem;
+      }
+
+      .start-subtitle {
+        font-size: 1rem;
+        line-height: 1.7;
+      }
+
+      .feature-chip {
+        padding: 8px 12px;
+        font-size: 0.84rem;
+      }
+
+      .btn-main,
+      .btn-soft {
+        width: 100%;
+      }
+
+      .hero-side {
+        min-height: 170px;
+      }
+
+      .hero-character {
+        width: min(54vw, 210px);
+        max-height: 24vh;
+      }
+
+      .screen {
+        width: calc(100% - 18px);
+        margin: 9px auto;
+        padding: 16px;
+        border-radius: 24px;
+      }
+
+      h1 {
+        font-size: 2.1rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .question-panel {
+        font-size: 1.35rem;
+        padding: 18px;
+      }
+
+      #current-letter {
+        font-size: 4.2rem;
+      }
+
+      .letters-grid {
+        grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+        gap: 10px;
+      }
+
+      .letter-btn {
+        font-size: 2.1rem;
+        padding: 12px 8px;
+        border-radius: 18px;
+      }
+
+      input {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-bg"></div>
+
+  <!-- شاشة البداية -->
+  <div id="screen-start">
+    <div class="start-overlay">
+      <div class="start-card">
+        <div class="start-badge">🏕️ لعبة كشفية تفاعلية</div>
+
+        <div class="start-title">
+          مغامرات <span>عبير</span>
+        </div>
+
+        <div class="start-subtitle">
+          تحدٍ كشفي ممتع بين الفرق، مليء بالحروف والأسئلة الصحية والمغامرات التعليمية.
+        </div>
+
+        <div class="start-features">
+          <div class="feature-chip">🎯 منافسة بين الفرق</div>
+          <div class="feature-chip">🧠 أسئلة كشفية</div>
+          <div class="feature-chip">🏆 نقاط وفائز</div>
+        </div>
+
+        <div class="start-actions">
+          <button class="btn-main" onclick="showScreen('screen-setup')">ابدأ المغامرة ←</button>
+          <button class="btn-soft" onclick="showHowToPlay()">طريقة اللعب</button>
+        </div>
+      </div>
+
+      <div class="hero-side">
+        <div class="hero-glow"></div>
+        <div class="spark s1">✦</div>
+        <div class="spark s2">✦</div>
+        <div class="spark s3">✦</div>
+        <div class="spark s4">✦</div>
+        <img src="./assets/abeer.png" alt="عبير الكشفية" class="hero-character">
+      </div>
+    </div>
+  </div>
+
+  <!-- شاشة الإعداد -->
+  <div id="screen-setup" class="screen">
+    <div class="panel">
+      <h1>تجهيز الفرق الكشفية</h1>
+      <h2>اختاري عدد الفرق وأسماءها</h2>
+
+      <div style="margin: 18px 0;">
+        <p style="font-size: 1.2rem; margin-bottom: 10px;">عدد الفرق المشاركة:</p>
+        <input type="number" id="num-teams" min="1" max="4" value="2" onchange="createInputs()">
+      </div>
+
+      <div id="input-area" style="margin-top: 18px; display: flex; flex-wrap: wrap; justify-content: center;"></div>
+
+      <div class="row-buttons" style="margin-top: 16px;">
+        <button class="btn-green" onclick="startGame()">جاهزون للانطلاق!</button>
+        <button class="btn-soft" style="color:#234b2b; background:#eef7ee; border-color:#d8e8d8;" onclick="goToStart()">رجوع</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- شاشة اللعب -->
+  <div id="screen-letters" class="screen">
+    <div class="panel">
+      <div id="status-bar"></div>
+      <div id="turn-text">الآن دور: ...</div>
+      <div class="letters-grid" id="letters-grid"></div>
+    </div>
+  </div>
+
+  <!-- شاشة السؤال -->
+  <div id="screen-question" class="screen">
+    <div class="panel">
+      <div class="timer-track">
+        <div id="timer-progress"></div>
+      </div>
+
+      <h1 id="current-letter">أ</h1>
+      <div class="question-panel" id="q-text">السؤال؟</div>
+
+      <div id="ans-box" class="hidden"></div>
+
+      <div id="q-controls" class="row-buttons">
+        <button class="btn-yellow" onclick="showAns()">كشف الإجابة الصحيحة 🔍</button>
+      </div>
+
+      <div id="grade-controls" class="row-buttons hidden">
+        <button class="btn-green" onclick="handleResult(true)">إجابة صحيحة ✅</button>
+        <button class="btn-orange" onclick="handleResult(false)">إجابة خاطئة ❌</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- شاشة النهاية -->
+  <div id="screen-end" class="screen">
+    <div class="panel">
+      <h1>مبروك للأبطال! 🏆</h1>
+      <div id="final-results"></div>
+
+      <div class="row-buttons" style="margin-top: 18px;">
+        <button class="btn-green" onclick="location.reload()">لعبة جديدة 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DATA = [
+      { l: "أ", q: "ما هي أول خطوة في إسعاف الجروح والحروق؟", a: "تأمين المكان وتطمين المصاب" },
+      { l: "ب", q: "أداة كشفية هامة لتحديد الاتجاهات في الغابة؟", a: "البوصلة" },
+      { l: "ت", q: "إجراء يومي للخيمة للتخلص من الرطوبة والقضاء على الحشرات؟", a: "التهوية المستمرة" },
+      { l: "ج", q: "تلف في أنسجة الجلد يجب غسله بالماء الجاري وتطهيره؟", a: "الجرح" },
+      { l: "ح", q: "حقيبة تلازم الكشاف في كل رحلة لحالات الطوارئ؟", a: "حقيبة الإسعافات الأولية" },
+      { l: "خ", q: "مكان مبيت الكشافة الذي يجب تنظيمه باستمرار؟", a: "الخيمة" },
+      { l: "ر", q: "نزيف من الأنف يُسعف بإمالة الرأس للأمام والضغط على الأنف؟", a: "الرعاف" },
+      { l: "س", q: "سلوك صحي وقائي يمنع انتقال العدوى قبل الأكل؟", a: "غسل اليدين جيداً" },
+      { l: "ش", q: "أداة تستخدم لتغطية الجروح ومنع تلوثها؟", a: "الشاش المعقم" },
+      { l: "ص", q: "مادة تستخدم مع الماء لقتل الجراثيم عند التنظيف؟", a: "الصابون" },
+      { l: "ع", q: "كائن لدغته خطيرة ويجب عدم تحريك العضو المصاب عند التعرض له؟", a: "العقرب" },
+      { l: "ق", q: "أداة في حقيبة الإسعافات لقص الضمادات الطبية؟", a: "المقص" },
+      { l: "م", q: "رباط كشفي مثلث يستخدم لتعليق اليد المصابة؟", a: "المنديل الكشفي" },
+      { l: "ن", q: "فقدان الدم من الجسم ويجب إيقافه بالضغط المباشر؟", a: "النزيف" },
+      { l: "هـ", q: "منظمة إنسانية شعارها الهلال وتسعف المصابين؟", a: "الهلال الأحمر السعودي" }
+    ];
+
+    let teams = [];
+    let turn = 0;
+    let used = [];
+    let clock;
+
+    function hideAllScreens() {
+      document.getElementById('screen-start').style.display = 'none';
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    }
+
+    function showScreen(id) {
+      hideAllScreens();
+      document.getElementById(id).classList.add('active');
+    }
+
+    function goToStart() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-start').style.display = 'flex';
+    }
+
+    function showHowToPlay() {
+      alert('اختاري عدد الفرق، ثم اختاري حرفاً في كل دور. بعد قراءة السؤال يمكن كشف الإجابة، ثم احتساب النقاط للفريق.');
+    }
+
+    function createInputs() {
+      const n = Number(document.getElementById('num-teams').value);
+      const area = document.getElementById('input-area');
+      area.innerHTML = '';
+
+      for (let i = 1; i <= n; i++) {
+        area.innerHTML += `<input type="text" id="t-${i}" placeholder="اسم الطليعة ${i}" value="طليعة ${i}">`;
+      }
+    }
+
+    createInputs();
+
+    function startGame() {
+      const n = Number(document.getElementById('num-teams').value);
+      teams = [];
+
+      for (let i = 1; i <= n; i++) {
+        const input = document.getElementById(`t-${i}`);
+        const name = input && input.value.trim() ? input.value.trim() : `طليعة ${i}`;
+        teams.push({ name, score: 0 });
+      }
+
+      turn = 0;
+      used = [];
+      render();
+      showScreen('screen-letters');
+    }
+
+    function render() {
+      const bar = document.getElementById('status-bar');
+      bar.innerHTML = '';
+
+      teams.forEach((t, i) => {
+        bar.innerHTML += `
+          <div class="team-box ${i === turn ? 'active' : ''}">
+            <div class="team-name">${t.name}</div>
+            <div class="team-score">${t.score} نقطة</div>
+          </div>
+        `;
+      });
+
+      document.getElementById('turn-text').innerText = `الآن دور: ${teams[turn].name} (اختر حرفاً)`;
+
+      const grid = document.getElementById('letters-grid');
+      grid.innerHTML = '';
+
+      DATA.forEach((item, idx) => {
+        const btn = document.createElement('div');
+        btn.className = 'letter-btn' + (used.includes(idx) ? ' disabled' : '');
+        btn.innerText = item.l;
+
+        if (!used.includes(idx)) {
+          btn.onclick = () => ask(idx);
+        }
+
+        grid.appendChild(btn);
+      });
+    }
+
+    function ask(idx) {
+      used.push(idx);
+      const item = DATA[idx];
+
+      document.getElementById('current-letter').innerText = item.l;
+      document.getElementById('q-text').innerText = item.q;
+      document.getElementById('ans-box').innerText = 'الإجابة الصحيحة: ' + item.a;
+
+      document.getElementById('ans-box').classList.add('hidden');
+      document.getElementById('q-controls').classList.remove('hidden');
+      document.getElementById('grade-controls').classList.add('hidden');
+
+      showScreen('screen-question');
+
+      let time = 20;
+      const bar = document.getElementById('timer-progress');
+      bar.style.width = '100%';
+
+      clearInterval(clock);
+      clock = setInterval(() => {
+        time--;
+        bar.style.width = (time / 20) * 100 + '%';
+
+        if (time <= 0) {
+          clearInterval(clock);
+          showAns();
+        }
+      }, 1000);
+    }
+
+    function showAns() {
+      clearInterval(clock);
+      document.getElementById('ans-box').classList.remove('hidden');
+      document.getElementById('q-controls').classList.add('hidden');
+      document.getElementById('grade-controls').classList.remove('hidden');
+    }
+
+    function handleResult(isWin) {
+      if (isWin) {
+        teams[turn].score += 10;
+      }
+
+      turn = (turn + 1) % teams.length;
+
+      if (used.length === DATA.length) {
+        endGame();
+      } else {
+        render();
+        showScreen('screen-letters');
+      }
+    }
+
+    function endGame() {
+      showScreen('screen-end');
+
+      const sorted = [...teams].sort((a, b) => b.score - a.score);
+      document.getElementById('final-results').innerHTML = sorted.map((t, idx) => `
+        <div class="result-card ${idx === 0 ? 'winner' : ''}">
+          ${idx === 0 ? '🥇 ' : ''}${t.name}: ${t.score} نقطة
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
